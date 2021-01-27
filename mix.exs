@@ -27,7 +27,8 @@ defmodule Tukc.MixProject do
 
       {:ratatouille, "~> 0.5"},
       {:kconnectex, git: "https://github.com/jmks/kconnectex.git"},
-      {:jason, "1.2.2"}
+      {:jason, "1.2.2"},
+      {:toml, "~> 0.6.1"}
     ]
   end
 
