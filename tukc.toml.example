@@ -1,0 +1,7 @@
+[cluster.local]
+host = "localhost"
+port = 8083
+
+[cluster.test]
+host = "https://testhost"
+port = 8083
