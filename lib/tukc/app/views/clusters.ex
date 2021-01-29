@@ -40,7 +40,7 @@ defmodule Tukc.App.Views.Clusters do
         column(size: 12) do
           panel(title: "Kafka Connect clusters") do
             table do
-              for {_, cluster} <- clusters do
+              for {_, cluster} <- Enum.sort_by(clusters, fn {name, _} -> name end) do
                 table_row do
                   table_cell(content: cluster.name)
                   table_cell(content: Cluster.url(cluster))
