@@ -8,13 +8,16 @@ defmodule Tukc.App.Views.Cluster do
   import Ratatouille.Constants, only: [color: 1]
   import Ratatouille.View
 
+  alias Tukc.App.Models
+
   # @style_selected [
   #   color: color(:black),
   #   background: color(:white)
   # ]
 
-  def render(%{connectors: :no_data}) do
+  def render(%{connectors: :no_data, cluster: cluster}) do
     view do
+      title(cluster)
       row do
         column(size: 12) do
           panel(title: "Connectors") do
@@ -29,8 +32,9 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(%{connectors: :none}) do
+  def render(%{connectors: :none, cluster: cluster}) do
     view do
+      title(cluster)
       row do
         column(size: 12) do
           panel(title: "Connectors") do
@@ -45,8 +49,9 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(%{connectors: connectors}) do
+  def render(%{connectors: connectors, cluster: cluster}) do
     view do
+      title(cluster)
       row do
         column(size: 12) do
           panel(title: "Connectors") do
@@ -61,5 +66,9 @@ defmodule Tukc.App.Views.Cluster do
         end
       end
     end
+  end
+
+  defp title(cluster) do
+    label(content: "Cluster: #{cluster.name} - #{Models.Cluster.url(cluster)}")
   end
 end
