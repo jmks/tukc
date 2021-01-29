@@ -8,22 +8,26 @@ defmodule Tukc.App.Views.Clusters do
   import Ratatouille.Constants, only: [color: 1]
   import Ratatouille.View
 
-  @style_selected [
-    color: color(:black),
-    background: color(:white)
-  ]
+  # @style_selected [
+  #   color: color(:black),
+  #   background: color(:white)
+  # ]
 
-  def render(%{data: {:ok, config}}) do
+  def render(%{data: {:ok, clusters}}) do
     view do
       row do
         column(size: 12) do
           panel(title: "Kafka Connect clusters") do
             table do
-              for cluster <- config do
+              for cluster <- clusters do
                 table_row do
                   table_cell(content: cluster.name)
                   table_cell(content: cluster.host)
-                  # table_cell(content: cluster.conected)
+                  if Map.has_key?(cluster, "connected") do
+                    table_cell(content: cluster.connected)
+                  else
+                    table_cell(content: "connecting...")
+                  end
                 end
               end
             end
