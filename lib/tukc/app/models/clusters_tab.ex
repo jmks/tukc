@@ -20,14 +20,24 @@ defmodule Tukc.App.Models.ClustersTab do
   end
 
   def cursor_down(model) do
-    new_selected = rem(model.selected_cluster + 1, Map.size(model.data))
+    new_selected = rem(model.selected_cluster + 1, map_size(model.data))
 
     %{model | selected_cluster: new_selected}
   end
 
   def cursor_up(model) do
-    new_selected = if model.selected_cluster == 0, do: Map.size(model.data) - 1, else: model.selected_cluster - 1
+    new_selected = if model.selected_cluster == 0, do: map_size(model.data) - 1, else: model.selected_cluster - 1
 
     %{model | selected_cluster: new_selected}
+  end
+
+  def selected(model) do
+    cluster_name =
+      model.data
+      |> Map.keys
+      |> Enum.sort
+      |> Enum.at(model.selected_cluster)
+
+    model.data[cluster_name]
   end
 end

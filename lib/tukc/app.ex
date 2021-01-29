@@ -9,9 +9,11 @@ defmodule Tukc.App do
 
   alias Tukc.Data.KafkaConnect
   alias Tukc.App.Views.{
+    Cluster,
     Clusters
   }
   alias Tukc.App.Models.{
+    ClusterTab,
     ClustersTab
   }
 
@@ -19,7 +21,7 @@ defmodule Tukc.App do
   @arrow_up key(:arrow_up)
   @arrow_down key(:arrow_down)
   # @arrow_left key(:arrow_left)
-  # @arrow_right key(:arrow_right)
+  @arrow_right key(:arrow_right)
 
   # @tab_keymap %{
   #   ?? => :help,
@@ -33,14 +35,14 @@ defmodule Tukc.App do
   def init(%{window: window}) do
     case Tukc.Configuration.load() do
       {:ok, clusters} ->
+        tab = ClustersTab.new(clusters)
         model = %{
           selected_tab: :clusters,
           tabs: %{
-            clusters: ClustersTab.new(clusters)
+            clusters: tab,
           },
           window: window
         }
-
         commands =
           Enum.map(clusters, fn cluster ->
             Command.new(
@@ -74,6 +76,24 @@ defmodule Tukc.App do
       {:event, %{ch: ch, key: key}} when ch == ?k or key == @arrow_up ->
         put_in(model[:tabs][model.selected_tab], ClustersTab.cursor_up(model[:tabs][:clusters]))
 
+      {:event, %{ch: ch, key: key}} when ch == ?l or key == @arrow_right ->
+        cluster = ClustersTab.selected(model[:tabs][:clusters])
+        cluster_tab = ClusterTab.new(cluster)
+
+        new_model =
+          put_in(model[:tabs][:cluster], cluster_tab)
+          |> Map.put(:selected_tab, :cluster)
+        command = Command.new(fn -> KafkaConnect.connectors(cluster_tab) end, {:connectors_updated, cluster.name})
+
+        {new_model, command}
+
+      {{:connectors_updated, cluster_name}, new_cluster_tab} ->
+        if model.tabs.cluster.cluster.name == cluster_name do
+          put_in(model[:tabs][:cluster], new_cluster_tab)
+        else
+          model
+        end
+
       _ ->
         model
     end
@@ -84,6 +104,8 @@ defmodule Tukc.App do
     case model.selected_tab do
       :clusters ->
         Clusters.render(model.tabs.clusters)
+      :cluster ->
+        Cluster.render(model.tabs.cluster)
     end
   end
 end
