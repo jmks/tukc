@@ -48,12 +48,10 @@ defmodule Tukc.App do
   end
 
   @impl true
-  def render(_model) do
-    alias Ratatouille.View
-    import Ratatouille.View
-
-    view do
-      label(content: "Hello World!")
+  def render(model) do
+    case model.selected_tab do
+      :clusters ->
+        Clusters.render(model.tabs.clusters)
     end
   end
 end
