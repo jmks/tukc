@@ -8,14 +8,16 @@ defmodule Tukc.App do
   alias Ratatouille.Runtime.Command
 
   alias Tukc.Data.KafkaConnect
-
   alias Tukc.App.Views.{
     Clusters
   }
+  alias Tukc.App.Models.{
+    ClustersTab
+  }
 
-  # import Ratatouille.Constants, only: [key: 1]
-  # @arrow_up key(:arrow_up)
-  # @arrow_down key(:arrow_down)
+  import Ratatouille.Constants, only: [key: 1]
+  @arrow_up key(:arrow_up)
+  @arrow_down key(:arrow_down)
   # @arrow_left key(:arrow_left)
   # @arrow_right key(:arrow_right)
 
@@ -31,12 +33,10 @@ defmodule Tukc.App do
   def init(%{window: window}) do
     case Tukc.Configuration.load() do
       {:ok, clusters} ->
-        data = Enum.into(clusters, %{}, fn cluster -> {cluster.name, cluster} end)
-
         model = %{
           selected_tab: :clusters,
           tabs: %{
-            clusters: %{data: data}
+            clusters: ClustersTab.new(clusters)
           },
           window: window
         }
@@ -55,7 +55,7 @@ defmodule Tukc.App do
         %{
           selected_tab: :clusters,
           tabs: %{
-            clusters: %{data: {:configuration_error, reasons}}
+            clusters: ClustersTab.error(reasons)
           }
         }
     end
@@ -64,9 +64,15 @@ defmodule Tukc.App do
   @impl true
   def update(model, msg) do
     case msg do
-      {{:cluster_updated, name}, new_cluster} ->
+      {{:cluster_updated, _}, new_cluster} ->
         # Process.sleep(:timer.seconds(1))
-        put_in(model[:tabs][:clusters][:data][name], new_cluster)
+        put_in(model[:tabs][:clusters], ClustersTab.update_cluster(model[:tabs][:clusters], new_cluster))
+
+      {:event, %{ch: ch, key: key}} when ch == ?j or key == @arrow_down ->
+        put_in(model[:tabs][model.selected_tab], ClustersTab.cursor_down(model[:tabs][:clusters]))
+
+      {:event, %{ch: ch, key: key}} when ch == ?k or key == @arrow_up ->
+        put_in(model[:tabs][model.selected_tab], ClustersTab.cursor_up(model[:tabs][:clusters]))
 
       _ ->
         model
