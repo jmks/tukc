@@ -5,10 +5,12 @@ defmodule Tukc.App do
 
   @behaviour Ratatouille.App
 
-  # alias Ratatouille.Runtime.{Command, Subscription}
+  alias Ratatouille.Runtime.Command
+
+  alias Tukc.Data.KafkaConnect
 
   alias Tukc.App.Views.{
-    Clusters,
+    Clusters
   }
 
   # import Ratatouille.Constants, only: [key: 1]
@@ -22,29 +24,53 @@ defmodule Tukc.App do
   #   ?H => :help
   # }
   # @tab_keys Map.keys(@tab_keymap)
-
-  @init_cursor %{position: 0, size: 0, continuous: true}
+  #
+  # @init_cursor %{position: 0, size: 0, continuous: true}
 
   @impl true
   def init(%{window: window}) do
-    model = %{
-      selected_tab: :clusters,
-      tabs: %{
-        clusters: %{
-          data: Tukc.Configuration.load(),
-          cursor_x: @init_cursor,
-          cursor_y: @init_cursor
-        }
-      },
-      window: window
-    }
+    case Tukc.Configuration.load() do
+      {:ok, clusters} ->
+        data = Enum.into(clusters, %{}, fn cluster -> {cluster.name, cluster} end)
 
-    model
+        model = %{
+          selected_tab: :clusters,
+          tabs: %{
+            clusters: %{data: data}
+          },
+          window: window
+        }
+
+        commands =
+          Enum.map(clusters, fn cluster ->
+            Command.new(
+              fn -> KafkaConnect.cluster_info(cluster) end,
+              {:cluster_updated, cluster.name}
+            )
+          end)
+
+        {model, Command.batch(commands)}
+
+      {:error, reasons} ->
+        %{
+          selected_tab: :clusters,
+          tabs: %{
+            clusters: %{data: reasons}
+          }
+        }
+    end
   end
 
   @impl true
-  def update(model, _msg) do
-    model
+  def update(model, msg) do
+    case msg do
+      {{:cluster_updated, name}, new_cluster} ->
+        # Process.sleep(:timer.seconds(1))
+        put_in(model[:tabs][:clusters][:data][name], new_cluster)
+
+      _ ->
+        model
+    end
   end
 
   @impl true

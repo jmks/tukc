@@ -5,6 +5,8 @@ defmodule Tukc.App.Views.Clusters do
   Lists clusters and their connectivity.
   """
 
+  alias Tukc.App.Models.Cluster
+
   import Ratatouille.Constants, only: [color: 1]
   import Ratatouille.View
 
@@ -13,21 +15,16 @@ defmodule Tukc.App.Views.Clusters do
   #   background: color(:white)
   # ]
 
-  def render(%{data: {:ok, clusters}}) do
+
+  def render(%{data: errors}) when is_list(errors) do
     view do
       row do
         column(size: 12) do
-          panel(title: "Kafka Connect clusters") do
+          panel(title: "Kafka Connect clusters -- Errors") do
             table do
-              for cluster <- clusters do
+              for error <- errors do
                 table_row do
-                  table_cell(content: cluster.name)
-                  table_cell(content: cluster.host)
-                  if Map.has_key?(cluster, "connected") do
-                    table_cell(content: cluster.connected)
-                  else
-                    table_cell(content: "connecting...")
-                  end
+                  table_cell(content: error)
                 end
               end
             end
@@ -37,15 +34,22 @@ defmodule Tukc.App.Views.Clusters do
     end
   end
 
-  def render(%{data: {:error, errors}}) do
+  def render(%{data: clusters}) do
     view do
       row do
         column(size: 12) do
-          panel(title: "Kafka Connect clusters -- Errors") do
+          panel(title: "Kafka Connect clusters") do
             table do
-              for error <- errors do
+              for {_, cluster} <- clusters do
                 table_row do
-                  table_cell(content: error)
+                  table_cell(content: cluster.name)
+                  table_cell(content: Cluster.url(cluster))
+
+                  case cluster.status do
+                    :connecting -> table_cell(content: "connecting...")
+                    :connected -> table_cell(content: "#{cluster.cluster_id} (#{cluster.kafka_version})")
+                    :unreachable -> table_cell(content: "Could not be reached")
+                  end
                 end
               end
             end
