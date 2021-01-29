@@ -13,32 +13,30 @@ defmodule Tukc.Configuration do
   end
 
   def load(filepath \\ nil) do
-    with {:ok, config} <- Toml.decode_file(filepath || config_file()),
+    with {:ok, file} <- config_file(filepath),
+         {:ok, config} <- Toml.decode_file(file),
          {:ok, config} <- validate_config(config) do
       {:ok, config}
     else
       {:error, {reason, explanation}} ->
-        {:error, "#{to_string reason}: #{to_string explanation}"}
+        {:error, "#{to_string(reason)}: #{to_string(explanation)}"}
+
       {:error, _} = error ->
         error
     end
   end
 
-  defp config_file() do
-    path = System.user_home() || File.cwd!()
-
-    Path.join([path, @config_filename])
-  end
-
   def validate_config(%{"cluster" => clusters}) do
-    servers = Enum.map(clusters, fn {name, cluster} ->
-      validate_cluster(Map.put(cluster, "name", name))
-    end)
+    servers =
+      Enum.map(clusters, fn {name, cluster} ->
+        validate_cluster(Map.put(cluster, "name", name))
+      end)
 
-    errors = Enum.filter(servers, fn
-      {:ok, _} -> false
-      {:error, _} -> true
-    end)
+    errors =
+      Enum.filter(servers, fn
+        {:ok, _} -> false
+        {:error, _} -> true
+      end)
 
     if Enum.any?(errors) do
       {:error, Enum.map(errors, fn {:error, reason} -> reason end)}
@@ -50,6 +48,27 @@ defmodule Tukc.Configuration do
 
   def validate_config(_) do
     {:error, "expected clusters defined as tables [cluster.name]"}
+  end
+
+  defp config_file(nil) do
+    files = default_files() |> Enum.filter(&File.exists?/1)
+
+    case files do
+      [file | _] ->
+        {:ok, file}
+
+      _ ->
+        defaults = default_files() |> Enum.join(", ")
+        {:error, "could not find configuration file. Looked for #{defaults}"}
+    end
+  end
+
+  defp config_file(provided), do: provided
+
+  defp default_files do
+    [System.user_home(), File.cwd!()]
+    |> Enum.filter(& &1)
+    |> Enum.map(fn dir -> Path.join([dir, @config_filename]) end)
   end
 
   defp validate_cluster(cluster) do
