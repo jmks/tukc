@@ -55,7 +55,7 @@ defmodule Tukc.App do
         %{
           selected_tab: :clusters,
           tabs: %{
-            clusters: %{data: reasons}
+            clusters: %{data: {:configuration_error, reasons}}
           }
         }
     end

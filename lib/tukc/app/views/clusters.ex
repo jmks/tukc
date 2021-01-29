@@ -15,15 +15,14 @@ defmodule Tukc.App.Views.Clusters do
   #   background: color(:white)
   # ]
 
-
-  def render(%{data: errors}) when is_list(errors) do
+  def render(%{data: {:configuration_error, errors}}) do
     view do
       row do
         column(size: 12) do
           panel(title: "Kafka Connect clusters -- Errors") do
             table do
               for error <- errors do
-                table_row do
+                table_row(color: color(:red)) do
                   table_cell(content: error)
                 end
               end
@@ -46,9 +45,9 @@ defmodule Tukc.App.Views.Clusters do
                   table_cell(content: Cluster.url(cluster))
 
                   case cluster.status do
-                    :connecting -> table_cell(content: "connecting...")
-                    :connected -> table_cell(content: "#{cluster.cluster_id} (#{cluster.kafka_version})")
-                    :unreachable -> table_cell(content: "Could not be reached")
+                    :connecting -> table_cell(color: color(:yellow), content: "connecting...")
+                    :connected -> table_cell(color: color(:green), content: "#{cluster.cluster_id} (#{cluster.kafka_version})")
+                    :unreachable -> table_cell(color: color(:red), content: "Could not be reached")
                   end
                 end
               end
