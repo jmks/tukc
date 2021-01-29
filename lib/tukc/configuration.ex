@@ -39,7 +39,7 @@ defmodule Tukc.Configuration do
   end
 
   def validate_config(_) do
-    {:error, "expected clusters defined as tables [cluster.name]"}
+    {:error, ["expected clusters defined as tables [cluster.name]"]}
   end
 
   defp config_file(nil) do
