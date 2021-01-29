@@ -1,16 +1,8 @@
 defmodule Tukc.Configuration do
+  alias Tukc.App.Models.Cluster
+
   @config_filename ".tukc.toml"
-
   @default_port 8083
-
-  defmodule Cluster do
-    @enforce_keys [:name, :host, :port]
-    defstruct [:name, :host, :port]
-
-    def from_map(%{"name" => name, "host" => host, "port" => port}) do
-      %__MODULE__{name: name, host: host, port: port}
-    end
-  end
 
   def load(filepath \\ nil) do
     with {:ok, file} <- config_file(filepath),
