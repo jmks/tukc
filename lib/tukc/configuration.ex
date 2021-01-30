@@ -11,9 +11,9 @@ defmodule Tukc.Configuration do
       {:ok, config}
     else
       {:error, {reason, explanation}} ->
-        {:error, "#{to_string(reason)}: #{to_string(explanation)}"}
+        {:error, ["#{to_string(reason)}: #{to_string(explanation)}"]}
 
-      {:error, _} = error ->
+      {:error, errors} = error when is_list(errors) ->
         error
     end
   end
@@ -50,8 +50,12 @@ defmodule Tukc.Configuration do
         {:ok, file}
 
       _ ->
-        defaults = default_files() |> Enum.join(", ")
-        {:error, "could not find configuration file. Looked for #{defaults}"}
+        message = [
+          "could not find configuration file",
+          "Looked for: " |
+          default_files() |> Enum.map(fn msg -> "  #{msg}" end)
+        ]
+        {:error, message}
     end
   end
 
