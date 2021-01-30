@@ -9,10 +9,6 @@ defmodule Tukc.App.Models.ClustersTab do
     }
   end
 
-  def error(reasons) do
-    %__MODULE__{data: {:configuration_error, reasons}}
-  end
-
   def update_cluster(model, new_cluster) do
     new_data = Map.put(model.data, new_cluster.name, new_cluster)
 

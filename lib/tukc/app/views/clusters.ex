@@ -15,24 +15,6 @@ defmodule Tukc.App.Views.Clusters do
     background: color(:white)
   ]
 
-  def render(%{data: {:configuration_error, errors}}) do
-    view do
-      row do
-        column(size: 12) do
-          panel(title: "Kafka Connect clusters -- Errors") do
-            table do
-              for error <- errors do
-                table_row(color: color(:red)) do
-                  table_cell(content: error)
-                end
-              end
-            end
-          end
-        end
-      end
-    end
-  end
-
   def render(%{data: clusters, selected_cluster: selected}) do
     view do
       row do
