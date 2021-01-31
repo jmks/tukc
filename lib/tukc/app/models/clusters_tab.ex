@@ -9,24 +9,6 @@ defmodule Tukc.App.Models.ClustersTab do
     }
   end
 
-  def update_cluster(model, new_cluster) do
-    new_data = Map.put(model.data, new_cluster.name, new_cluster)
-
-    %{model | data: new_data}
-  end
-
-  def cursor_down(model) do
-    new_selected = rem(model.selected_cluster + 1, map_size(model.data))
-
-    %{model | selected_cluster: new_selected}
-  end
-
-  def cursor_up(model) do
-    new_selected = if model.selected_cluster == 0, do: map_size(model.data) - 1, else: model.selected_cluster - 1
-
-    %{model | selected_cluster: new_selected}
-  end
-
   def selected(model) do
     cluster_name =
       model.data

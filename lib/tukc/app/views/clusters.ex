@@ -15,14 +15,14 @@ defmodule Tukc.App.Views.Clusters do
     background: color(:white)
   ]
 
-  def render(%{data: clusters, selected_cluster: selected}) do
+  def render(clusters, selected_cluster) do
     view do
       row do
         column(size: 12) do
           panel(title: "Kafka Connect clusters") do
             table do
-              for {{_, cluster}, index} <- clusters |> Enum.sort_by(fn {name, _} -> name end) |> Enum.with_index do
-                selected? = index == selected
+              for cluster <- clusters do
+                selected? = cluster.name == selected_cluster.name
 
                 table_row(if selected?, do: @style_selected, else: []) do
                   table_cell(content: cluster.name)

@@ -15,7 +15,7 @@ defmodule Tukc.App.Views.Cluster do
   #   background: color(:white)
   # ]
 
-  def render(%{connectors: :no_data, cluster: cluster}) do
+  def render(cluster, :no_data) do
     view do
       title(cluster)
       row do
@@ -32,7 +32,7 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(%{connectors: :none, cluster: cluster}) do
+  def render(cluster, []) do
     view do
       title(cluster)
       row do
@@ -49,7 +49,7 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(%{connectors: connectors, cluster: cluster}) do
+  def render(cluster, connectors) do
     view do
       title(cluster)
       row do
@@ -58,7 +58,7 @@ defmodule Tukc.App.Views.Cluster do
             table do
               for connector <- connectors do
                 table_row do
-                  table_cell(content: connector.name)
+                  table_cell(content: connector)
                 end
               end
             end

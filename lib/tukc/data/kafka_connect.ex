@@ -1,5 +1,5 @@
 defmodule Tukc.Data.KafkaConnect do
-  alias Tukc.App.Models.{Cluster, ClusterTab}
+  alias Tukc.App.Models.Cluster
 
   def cluster_info(cluster) do
     client = Kconnectex.client(Cluster.url(cluster))
@@ -13,12 +13,14 @@ defmodule Tukc.Data.KafkaConnect do
     end
   end
 
-  def connectors(cluster_tab) do
-    client = Kconnectex.client(Cluster.url(cluster_tab.cluster))
+  def connectors(cluster) do
+    client = Kconnectex.client(Cluster.url(cluster))
 
     case Kconnectex.Connectors.list(client) do
       {:ok, connectors} ->
-        ClusterTab.update_connectors(cluster_tab, connectors)
+        connectors
+
+      # TODO: errors!
     end
   end
 end

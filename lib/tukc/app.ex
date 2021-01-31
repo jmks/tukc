@@ -5,16 +5,11 @@ defmodule Tukc.App do
 
   @behaviour Ratatouille.App
 
-  alias Ratatouille.Runtime.Command
-
-  alias Tukc.Data.KafkaConnect
+  alias Tukc.App.Models.State
+  alias Tukc.App.Update
   alias Tukc.App.Views.{
     Cluster,
     Clusters
-  }
-  alias Tukc.App.Models.{
-    ClusterTab,
-    ClustersTab
   }
 
   import Ratatouille.Constants, only: [key: 1]
@@ -32,26 +27,11 @@ defmodule Tukc.App do
   # @init_cursor %{position: 0, size: 0, continuous: true}
 
   @impl true
-  def init(%{window: window}) do
+  def init(_) do
     case Tukc.Configuration.load() do
       {:ok, clusters} ->
-        tab = ClustersTab.new(clusters)
-        model = %{
-          selected_tab: :clusters,
-          tabs: %{
-            clusters: tab,
-          },
-          window: window
-        }
-        commands =
-          Enum.map(clusters, fn cluster ->
-            Command.new(
-              fn -> KafkaConnect.cluster_info(cluster) end,
-              {:cluster_updated, cluster.name}
-            )
-          end)
-
-        {model, Command.batch(commands)}
+        model = State.with_clusters(clusters)
+        Update.update(model)
 
       {:error, reasons} ->
         {:configuration_error, reasons}
@@ -62,32 +42,21 @@ defmodule Tukc.App do
   def update(model, msg) do
     case msg do
       {{:cluster_updated, _}, new_cluster} ->
-        # Process.sleep(:timer.seconds(1))
-        put_in(model[:tabs][:clusters], ClustersTab.update_cluster(model[:tabs][:clusters], new_cluster))
+        # Process.sleep(500)
+        State.update_cluster(model, new_cluster)
+
+      {{:connectors_updated, cluster_name}, connectors} ->
+        # Process.sleep(500)
+        Update.update_connectors(model, cluster_name, connectors)
 
       {:event, %{ch: ch, key: key}} when ch == ?j or key == @arrow_down ->
-        put_in(model[:tabs][model.selected_tab], ClustersTab.cursor_down(model[:tabs][:clusters]))
+        Update.cursor_down(model)
 
       {:event, %{ch: ch, key: key}} when ch == ?k or key == @arrow_up ->
-        put_in(model[:tabs][model.selected_tab], ClustersTab.cursor_up(model[:tabs][:clusters]))
+        Update.cursor_up(model)
 
       {:event, %{ch: ch, key: key}} when ch == ?l or key == @arrow_right ->
-        cluster = ClustersTab.selected(model[:tabs][:clusters])
-        cluster_tab = ClusterTab.new(cluster)
-
-        new_model =
-          put_in(model[:tabs][:cluster], cluster_tab)
-          |> Map.put(:selected_tab, :cluster)
-        command = Command.new(fn -> KafkaConnect.connectors(cluster_tab) end, {:connectors_updated, cluster.name})
-
-        {new_model, command}
-
-      {{:connectors_updated, cluster_name}, new_cluster_tab} ->
-        if model.tabs.cluster.cluster.name == cluster_name do
-          put_in(model[:tabs][:cluster], new_cluster_tab)
-        else
-          model
-        end
+        Update.select_cluster(model)
 
       _ ->
         model
@@ -117,12 +86,13 @@ defmodule Tukc.App do
   end
 
   @impl true
-  def render(model) do
-    case model.selected_tab do
+  def render(state) do
+    case state.selected do
       :clusters ->
-        Clusters.render(model.tabs.clusters)
+        Clusters.render(state.clusters, state.selected_cluster)
+
       :cluster ->
-        Cluster.render(model.tabs.cluster)
+        Cluster.render(state.selected_cluster, state.connectors)
     end
   end
 end
