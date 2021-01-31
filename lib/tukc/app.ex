@@ -5,7 +5,7 @@ defmodule Tukc.App do
 
   @behaviour Ratatouille.App
 
-  alias Tukc.App.Models.State
+  alias Tukc.App.Model
   alias Tukc.App.Update
   alias Tukc.App.Views.{
     Cluster,
@@ -31,7 +31,7 @@ defmodule Tukc.App do
   def init(_) do
     case Tukc.Configuration.load() do
       {:ok, clusters} ->
-        model = State.with_clusters(clusters)
+        model = Model.with_clusters(clusters)
         Update.update(model)
 
       {:error, reasons} ->
@@ -44,7 +44,7 @@ defmodule Tukc.App do
     case msg do
       {{:cluster_updated, _}, new_cluster} ->
         # Process.sleep(500)
-        State.update_cluster(model, new_cluster)
+        Model.update_cluster(model, new_cluster)
 
       {{:connectors_updated, cluster_name}, connectors} ->
         # Process.sleep(500)
@@ -73,13 +73,13 @@ defmodule Tukc.App do
   end
 
   @impl true
-  def render(state) do
-    case state.selected do
+  def render(model) do
+    case model.selected do
       :clusters ->
-        Clusters.render(state.clusters, state.selected_cluster)
+        Clusters.render(model.clusters, model.selected_cluster)
 
       :cluster ->
-        Cluster.render(state.selected_cluster, state.connectors)
+        Cluster.render(model.selected_cluster, model.connectors)
     end
   end
 end

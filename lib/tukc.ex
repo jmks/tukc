@@ -22,7 +22,7 @@ defmodule Tukc do
     )
   end
 
-  def stop(_state) do
+  def stop(_model) do
     # Do a hard shutdown after the application has been stopped.
     #
     # Another, perhaps better, option is `System.stop/0`, but this results in a
