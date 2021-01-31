@@ -16,16 +16,14 @@ defmodule Tukc.App.Update do
     State.previous_cluster(state)
   end
 
-  def select(%{selected: :clusters} = state) do
+  def select(%{selected: :clusters, selected_cluster: %{status: :connected}} = state) do
     new_state = Map.put(state, :selected, :cluster)
     command = load_connectors(state.selected_cluster)
 
     {new_state, command}
   end
 
-  def update_connectors(state, cluster, connectors) do
-    State.update_connectors(state, cluster, connectors)
-  end
+  def select(state), do: state
 
   def unselect(%{selected: :cluster} = model) do
     new_state = State.unselect_connectors(model)
