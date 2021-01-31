@@ -5,15 +5,7 @@ defmodule Tukc.App.Update do
   alias Tukc.Data.KafkaConnect
 
   def update(%{selected: :clusters} = state) do
-    load_clusters =
-      Enum.map(state.clusters, fn cluster ->
-        Command.new(
-          fn -> KafkaConnect.cluster_info(cluster) end,
-          {:cluster_updated, cluster.name}
-        )
-      end)
-
-    {state, Command.batch(load_clusters)}
+    {state, load_clusters(state.clusters)}
   end
 
   def cursor_down(%{selected: :clusters} = state) do
@@ -26,16 +18,37 @@ defmodule Tukc.App.Update do
 
   def select_cluster(state) do
     new_state = Map.put(state, :selected, :cluster)
+    command = load_connectors(state.selected_cluster)
 
-    load_connectors = Command.new(
-      fn -> KafkaConnect.connectors(state.selected_cluster) end,
-      {:connectors_updated, state.selected_cluster.name}
-    )
-
-    {new_state, load_connectors}
+    {new_state, command}
   end
 
   def update_connectors(state, cluster, connectors) do
     State.update_connectors(state, cluster, connectors)
+  end
+
+  def unselect_connectors(model) do
+    new_state = State.unselect_connectors(model)
+    commands = load_clusters(model.clusters)
+
+    {new_state, commands}
+  end
+
+  defp load_clusters(clusters) do
+    clusters
+    |> Enum.map(fn cluster ->
+      Command.new(
+        fn -> KafkaConnect.cluster_info(cluster) end,
+        {:cluster_updated, cluster.name}
+      )
+    end)
+    |> Command.batch
+  end
+
+  defp load_connectors(cluster) do
+    Command.new(
+      fn -> KafkaConnect.connectors(cluster) end,
+      {:connectors_updated, cluster.name}
+    )
   end
 end

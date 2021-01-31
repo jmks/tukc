@@ -15,7 +15,7 @@ defmodule Tukc.App do
   import Ratatouille.Constants, only: [key: 1]
   @arrow_up key(:arrow_up)
   @arrow_down key(:arrow_down)
-  # @arrow_left key(:arrow_left)
+  @arrow_left key(:arrow_left)
   @arrow_right key(:arrow_right)
 
   # @tab_keymap %{
@@ -57,6 +57,9 @@ defmodule Tukc.App do
 
       {:event, %{ch: ch, key: key}} when ch == ?l or key == @arrow_right ->
         Update.select_cluster(model)
+
+      {:event, %{ch: ch, key: key}} when ch == ?h or key == @arrow_left ->
+        Update.unselect_connectors(model)
 
       _ ->
         model

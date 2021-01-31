@@ -48,6 +48,10 @@ defmodule Tukc.App.Models.State do
     end
   end
 
+  def unselect_connectors(state) do
+    %{state | connectors: :no_data, selected: :clusters}
+  end
+
   defp sort_by_name(things) do
     Enum.sort_by(things, fn thing -> thing.name end)
   end
