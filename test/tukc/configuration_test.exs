@@ -2,7 +2,7 @@ defmodule Tukc.ConfigurationTest do
   use ExUnit.Case, async: true
 
   alias Tukc.Configuration
-  alias Tukc.Configuration.Cluster
+  alias Tukc.App.Models.Cluster
 
   test "host and port are valid" do
     config = %{"cluster" => %{"local" => %{"host" => "localhost", "port" => 8080}}}
