@@ -9,7 +9,8 @@ defmodule Tukc.App do
   alias Tukc.App.Update
   alias Tukc.App.Views.{
     Cluster,
-    Clusters
+    Clusters,
+    ConfigurationError
   }
 
   import Ratatouille.Constants, only: [key: 1]
@@ -68,24 +69,7 @@ defmodule Tukc.App do
 
   @impl true
   def render({:configuration_error, errors}) do
-    import Ratatouille.Constants, only: [color: 1]
-    import Ratatouille.View
-
-    view do
-      row do
-        column(size: 12) do
-          panel(title: "Kafka Connect clusters -- Errors") do
-            table do
-              for error <- errors do
-                table_row(color: color(:red)) do
-                  table_cell(content: error)
-                end
-              end
-            end
-          end
-        end
-      end
-    end
+    ConfigurationError.render(errors)
   end
 
   @impl true
