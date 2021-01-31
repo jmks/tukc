@@ -48,7 +48,7 @@ defmodule Tukc.App.Models.State do
     end
   end
 
-  def unselect_connectors(state) do
+  def unselect_cluster(state) do
     %{state | connectors: :no_data, selected: :clusters}
   end
 

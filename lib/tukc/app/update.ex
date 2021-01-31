@@ -26,7 +26,7 @@ defmodule Tukc.App.Update do
   def select(state), do: state
 
   def unselect(%{selected: :cluster} = model) do
-    new_state = State.unselect_connectors(model)
+    new_state = State.unselect_cluster(model)
     commands = load_clusters(model.clusters)
 
     {new_state, commands}
