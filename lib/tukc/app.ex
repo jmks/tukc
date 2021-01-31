@@ -55,6 +55,8 @@ defmodule Tukc.App do
       {:event, %{ch: ch, key: key}} when ch == ?k or key == @arrow_up ->
         Update.cursor_up(model)
 
+      # TODO: these two are view specific!
+
       {:event, %{ch: ch, key: key}} when ch == ?l or key == @arrow_right ->
         Update.select_cluster(model)
 
