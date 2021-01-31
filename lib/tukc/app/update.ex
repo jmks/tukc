@@ -32,6 +32,7 @@ defmodule Tukc.App.Update do
     {new_state, commands}
   end
 
+  def unselect(model), do: model
 
   def update_connectors(state, cluster, connectors) do
     State.update_connectors(state, cluster, connectors)
