@@ -35,7 +35,7 @@ defmodule Tukc.App.Model do
   def update_cluster(model, new_cluster) do
     index = Enum.find_index(model.clusters, fn cluster -> cluster.name == new_cluster.name end)
     new_clusters = List.replace_at(model.clusters, index, new_cluster)
-    new_selected = Enum.at(model.clusters, model.selected_cluster_index)
+    new_selected = Enum.at(new_clusters, model.selected_cluster_index)
 
     %{model | clusters: new_clusters, selected_cluster: new_selected }
   end
