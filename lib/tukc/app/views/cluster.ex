@@ -58,7 +58,7 @@ defmodule Tukc.App.Views.Cluster do
             table do
               for connector <- connectors do
                 table_row do
-                  table_cell(content: connector)
+                  table_cell(content: connector.name)
                 end
               end
             end

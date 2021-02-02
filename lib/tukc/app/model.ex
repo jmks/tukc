@@ -7,6 +7,8 @@ defmodule Tukc.App.Model do
     connectors: :no_data
   ]
 
+  alias Tukc.App.Models.Connector
+
   def with_clusters(clusters) do
     sorted_clusters = sort_by_name(clusters)
 
@@ -42,7 +44,7 @@ defmodule Tukc.App.Model do
 
   def update_connectors(model, cluster, connectors) do
     if cluster == model.selected_cluster.name do
-      %{model | connectors: connectors}
+      %{model | connectors: Enum.map(connectors, &Connector.new(&1))}
     else
       model
     end
