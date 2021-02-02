@@ -14,4 +14,14 @@ defmodule Tukc.App.Models.Connector do
   def new(name) do
     %__MODULE__{name: name}
   end
+
+  def update_status(connector, status) do
+    %{ connector |
+       state: Map.get(@states, status["connector"]["state"]),
+       type: status["type"],
+       jobs: Enum.map(status["tasks"], fn task ->
+         {task["id"], Map.get(@states, task["state"])}
+       end)
+    }
+  end
 end

@@ -67,6 +67,8 @@ defmodule Tukc.App.Views.Cluster do
                   case connector.state do
                     :no_data ->
                       table_cell(color: color(:yellow), content: "loading...")
+                    :running ->
+                      table_cell(color: color(:green), content: "running")
                   end
                 end
               end

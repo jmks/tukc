@@ -49,6 +49,9 @@ defmodule Tukc.App do
       {{:connectors_updated, cluster_name}, connectors} ->
         Update.update_connectors(model, cluster_name, connectors)
 
+      {:connector_updated, connector} ->
+        Update.update_connector(model, connector)
+
       {:event, %{ch: ch, key: key}} when ch == ?j or key == @arrow_down ->
         Update.cursor_down(model)
 

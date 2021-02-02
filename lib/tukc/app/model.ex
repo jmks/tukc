@@ -55,6 +55,18 @@ defmodule Tukc.App.Model do
     end
   end
 
+  def update_connector(model, connector) do
+    index = Enum.find_index(model.connectors, fn conn -> conn.name == connector.name end)
+
+    if index do
+      new_connectors = List.replace_at(model.connectors, index, connector)
+
+      %{model | connectors: new_connectors}
+    else
+      model
+    end
+  end
+
   def unselect_cluster(model) do
     %{model | connectors: :no_data, selected: :clusters}
   end
