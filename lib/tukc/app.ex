@@ -43,11 +43,9 @@ defmodule Tukc.App do
   def update(model, msg) do
     case msg do
       {{:cluster_updated, _}, new_cluster} ->
-        # Process.sleep(500)
         Model.update_cluster(model, new_cluster)
 
       {{:connectors_updated, cluster_name}, connectors} ->
-        # Process.sleep(500)
         Update.update_connectors(model, cluster_name, connectors)
 
       {:event, %{ch: ch, key: key}} when ch == ?j or key == @arrow_down ->
