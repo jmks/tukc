@@ -42,9 +42,14 @@ defmodule Tukc.App.Model do
     %{model | clusters: new_clusters, selected_cluster: new_selected }
   end
 
-  def update_connectors(model, cluster, connectors) do
+  def update_connectors(model, cluster, connector_names) do
     if cluster == model.selected_cluster.name do
-      %{model | connectors: Enum.map(connectors, &Connector.new(&1))}
+      connectors =
+        connector_names
+        |> Enum.sort
+        |> Enum.map(&Connector.new(&1))
+
+      %{model | connectors: connectors}
     else
       model
     end
