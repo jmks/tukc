@@ -31,8 +31,9 @@ defmodule Tukc.App do
   def init(_) do
     case Tukc.Configuration.load() do
       {:ok, clusters} ->
-        model = Model.with_clusters(clusters)
-        Update.update(model)
+        clusters
+        |> Model.with_clusters
+        |> Update.update
 
       {:error, reasons} ->
         {:configuration_error, reasons}
