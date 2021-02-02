@@ -56,9 +56,18 @@ defmodule Tukc.App.Views.Cluster do
         column(size: 12) do
           panel(title: "Connectors") do
             table do
+              table_row(attributes: [:bold]) do
+                table_cell(content: "Connector")
+                table_cell(content: "State")
+              end
+
               for connector <- connectors do
                 table_row do
                   table_cell(content: connector.name)
+                  case connector.state do
+                    :no_data ->
+                      table_cell(color: color(:yellow), content: "loading...")
+                  end
                 end
               end
             end
