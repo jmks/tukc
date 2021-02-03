@@ -21,18 +21,32 @@ defmodule Tukc.App.Model do
     }
   end
 
-  def next_cluster(%{selected: :clusters} = model) do
+  def next(%{selected: :clusters} = model) do
     new_index = rem(model.selected_cluster_index + 1, length(model.clusters))
     new_selected = Enum.at(model.clusters, new_index)
 
     %{model | selected_cluster: new_selected, selected_cluster_index: new_index}
   end
 
-  def previous_cluster(%{selected: :clusters} = model) do
+  def next(%{selected: :cluster} = model) do
+    new_index = rem(model.selected_connector_index + 1, length(model.connectors))
+    new_selected = Enum.at(model.connectors, new_index)
+
+    %{model | selected_connector: new_selected, selected_connector_index: new_index}
+  end
+
+  def previous(%{selected: :clusters} = model) do
     new_index = if model.selected_cluster_index == 0, do: length(model.clusters) - 1, else: model.selected_cluster_index - 1
     new_selected = Enum.at(model.clusters, new_index)
 
     %{model | selected_cluster: new_selected, selected_cluster_index: new_index}
+  end
+
+  def previous(%{selected: :cluster} = model) do
+    new_index = if model.selected_connector_index == 0, do: length(model.connectors) - 1, else: model.selected_connector_index - 1
+    new_selected = Enum.at(model.connectors, new_index)
+
+    %{model | selected_connector: new_selected, selected_connector_index: new_index}
   end
 
   def update_cluster(model, new_cluster) do

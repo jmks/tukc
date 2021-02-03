@@ -8,13 +8,9 @@ defmodule Tukc.App.Update do
     {model, load_clusters(model.clusters)}
   end
 
-  def cursor_down(%{selected: :clusters} = model) do
-    Model.next_cluster(model)
-  end
+  def cursor_down(model), do: Model.next(model)
 
-  def cursor_up(%{selected: :clusters} = model) do
-    Model.previous_cluster(model)
-  end
+  def cursor_up(model), do: Model.previous(model)
 
   def select(%{selected: :clusters, selected_cluster: %{status: :connected}} = model) do
     new_model = Map.put(model, :selected, :cluster)
