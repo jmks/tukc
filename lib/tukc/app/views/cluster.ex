@@ -59,17 +59,21 @@ defmodule Tukc.App.Views.Cluster do
               table_row(attributes: [:bold]) do
                 table_cell(content: "Connector")
                 table_cell(content: "State")
+                table_cell(content: "Tasks")
               end
 
               for connector <- connectors do
                 table_row do
                   table_cell(content: connector.name)
+
                   case connector.state do
                     :no_data ->
                       table_cell(color: color(:yellow), content: "loading...")
                     :running ->
                       table_cell(color: color(:green), content: "running")
                   end
+
+                  task_indicator(connector.jobs)
                 end
               end
             end
@@ -81,5 +85,20 @@ defmodule Tukc.App.Views.Cluster do
 
   defp title(cluster) do
     label(content: "Cluster: #{cluster.name} - #{Models.Cluster.url(cluster)}")
+  end
+
+  defp task_indicator(:no_data), do: table_cell(color: color(:yellow), content: "loading...")
+
+  defp task_indicator(jobs) do
+    states = MapSet.new(jobs |> Enum.map(fn {_, state} -> state end))
+
+    cond do
+      :running in states and map_size(states) == 1 ->
+        table_cell(color: color(:green), content: "OK")
+      not MapSet.member?(states, :failed) ->
+        table_cell(color: color(:yellow), content: "OK")
+      true ->
+        table_cell(color: color(:red), content: "FAILED")
+    end
   end
 end
