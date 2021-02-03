@@ -93,7 +93,7 @@ defmodule Tukc.App.Views.Cluster do
     states = MapSet.new(jobs |> Enum.map(fn {_, state} -> state end))
 
     cond do
-      :running in states and map_size(states) == 1 ->
+      :running in states and MapSet.size(states) == 1 ->
         table_cell(color: color(:green), content: "OK")
       not MapSet.member?(states, :failed) ->
         table_cell(color: color(:yellow), content: "OK")
