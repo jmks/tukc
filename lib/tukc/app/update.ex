@@ -34,6 +34,10 @@ defmodule Tukc.App.Update do
 
   def unselect(model), do: model
 
+  def update_connectors(model, cluster, []) do
+    Model.update_connectors(model, cluster, [])
+  end
+
   def update_connectors(model, cluster, connectors) do
     new_model = Model.update_connectors(model, cluster, connectors)
     command = load_connectors(new_model.selected_cluster, new_model.connectors)

@@ -32,7 +32,7 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(cluster, []) do
+  def render(cluster, :none) do
     view do
       title(cluster)
       row do

@@ -42,6 +42,10 @@ defmodule Tukc.App.Model do
     %{model | clusters: new_clusters, selected_cluster: new_selected }
   end
 
+  def update_connectors(model, cluster, []) do
+    %{model | connectors: :none}
+  end
+
   def update_connectors(model, cluster, connector_names) do
     if cluster == model.selected_cluster.name do
       connectors =
