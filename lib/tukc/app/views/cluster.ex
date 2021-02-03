@@ -10,12 +10,12 @@ defmodule Tukc.App.Views.Cluster do
 
   alias Tukc.App.Models
 
-  # @style_selected [
-  #   color: color(:black),
-  #   background: color(:white)
-  # ]
+  @style_selected [
+    color: color(:black),
+    background: color(:white)
+  ]
 
-  def render(cluster, :no_data) do
+  def render(cluster, :no_data, nil) do
     view do
       title(cluster)
       row do
@@ -32,7 +32,7 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(cluster, :none) do
+  def render(cluster, :none, nil) do
     view do
       title(cluster)
       row do
@@ -49,7 +49,7 @@ defmodule Tukc.App.Views.Cluster do
     end
   end
 
-  def render(cluster, connectors) do
+  def render(cluster, connectors, selected_connector) do
     view do
       title(cluster)
       row do
@@ -63,7 +63,10 @@ defmodule Tukc.App.Views.Cluster do
               end
 
               for connector <- connectors do
-                table_row do
+                selected? = connector.name == selected_connector.name
+
+
+                table_row(if selected?, do: @style_selected, else: []) do
                   table_cell(content: connector.name)
 
                   case connector.state do

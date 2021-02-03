@@ -81,7 +81,7 @@ defmodule Tukc.App do
         Clusters.render(model.clusters, model.selected_cluster)
 
       :cluster ->
-        Cluster.render(model.selected_cluster, model.connectors)
+        Cluster.render(model.selected_cluster, model.connectors, model.selected_connector)
     end
   end
 end

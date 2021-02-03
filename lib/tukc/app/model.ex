@@ -4,7 +4,8 @@ defmodule Tukc.App.Model do
     :selected,
     :clusters,
     :selected_cluster, :selected_cluster_index,
-    connectors: :no_data
+    :selected_connector, :selected_connector_index,
+    connectors: :no_data,
   ]
 
   alias Tukc.App.Models.Connector
@@ -53,7 +54,7 @@ defmodule Tukc.App.Model do
         |> Enum.sort
         |> Enum.map(&Connector.new(&1))
 
-      %{model | connectors: connectors}
+      %{model | connectors: connectors, selected_connector: hd(connectors), selected_connector_index: 0}
     else
       model
     end

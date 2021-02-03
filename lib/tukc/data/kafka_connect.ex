@@ -30,6 +30,8 @@ defmodule Tukc.Data.KafkaConnect do
     case Kconnectex.Connectors.status(client, connector.name) do
       {:ok, status} ->
         Connector.update_status(connector, status)
+
+      # TODO: errors!
     end
   end
 end
