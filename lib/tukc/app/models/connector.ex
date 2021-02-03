@@ -1,6 +1,9 @@
 defmodule Tukc.App.Models.Connector do
   @states %{
-    "RUNNING" => :running
+    "RUNNING" => :running,
+    "PAUSED" => :paused,
+    "FAILED" => :failed,
+    "UNASSIGNED" => :unassigned
   }
 
   @enforce_keys [:name]
