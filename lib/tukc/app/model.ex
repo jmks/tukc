@@ -87,10 +87,20 @@ defmodule Tukc.App.Model do
   end
 
   def unselect_cluster(model) do
-    %{model | connectors: :no_data, selected: :clusters}
+    model
+    |> clear_connectors
+    |> view(:clusters)
   end
 
   defp sort_by_name(things) do
     Enum.sort_by(things, fn thing -> thing.name end)
+  end
+
+  defp clear_connectors(model) do
+    %{model | connectors: :no_data, selected_connector: nil, selected_connector_index: nil}
+  end
+
+  defp view(model, new_view) do
+    %{model | selected: new_view}
   end
 end
