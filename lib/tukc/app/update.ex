@@ -14,7 +14,7 @@ defmodule Tukc.App.Update do
 
   def select(%{selected: :clusters, selected_cluster: %{status: :connected}} = model) do
     new_model = Map.put(model, :selected, :cluster)
-    command = load_connector_for_cluster(model.selected_cluster)
+    command = load_connectors(model.selected_cluster)
 
     {new_model, command}
   end
@@ -37,7 +37,7 @@ defmodule Tukc.App.Update do
 
   def unselect(%{selected: :connector} = model) do
     new_model = Model.unselect_connector(model)
-    command = load_connector_for_cluster(model.selected_cluster)
+    command = load_connectors(model.selected_cluster)
 
     {new_model, command}
   end
@@ -74,7 +74,7 @@ defmodule Tukc.App.Update do
     |> Command.batch
   end
 
-  defp load_connector_for_cluster(cluster) do
+  defp load_connectors(cluster) do
     Command.new(
       fn -> KafkaConnect.connectors(cluster) end,
       {:connectors_updated, cluster.name}
