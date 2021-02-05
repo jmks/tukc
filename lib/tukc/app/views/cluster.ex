@@ -65,17 +65,9 @@ defmodule Tukc.App.Views.Cluster do
               for connector <- connectors do
                 selected? = connector.name == selected_connector.name
 
-
                 table_row(if selected?, do: @style_selected, else: []) do
                   table_cell(content: connector.name)
-
-                  case connector.state do
-                    :no_data ->
-                      table_cell(color: color(:yellow), content: "loading...")
-                    :running ->
-                      table_cell(color: color(:green), content: "running")
-                  end
-
+                  connector_status(connector.state)
                   task_indicator(connector.jobs)
                 end
               end
@@ -89,6 +81,12 @@ defmodule Tukc.App.Views.Cluster do
   defp title(cluster) do
     label(content: "Cluster: #{cluster.name} - #{Models.Cluster.url(cluster)}")
   end
+
+  defp connector_status(:no_data), do: table_cell(color: color(:yellow), content: "loading...")
+  defp connector_status(:paused), do: table_cell(color: color(:yellow), content: "paused")
+  defp connector_status(:unassigned), do: table_cell(color: color(:yellow), content: "unassigned")
+  defp connector_status(:running), do: table_cell(color: color(:green), content: "running")
+  defp connector_status(:failed), do: table_cell(color: color(:red), content: "failed")
 
   defp task_indicator(:no_data), do: table_cell(color: color(:yellow), content: "loading...")
 
