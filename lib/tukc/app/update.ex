@@ -19,6 +19,13 @@ defmodule Tukc.App.Update do
     {new_model, command}
   end
 
+  def select(%{selected: :cluster} = model) do
+    new_model = Map.put(model, :selected, :connector)
+    command = load_connector_details(model.selected_cluster, model.selected_connector)
+
+    {new_model, command}
+  end
+
   def select(model), do: model
 
   def unselect(%{selected: :cluster} = model) do
@@ -43,6 +50,10 @@ defmodule Tukc.App.Update do
 
   def update_connector(model, connector) do
     Model.update_connector(model, connector)
+  end
+
+  def update_connector_config(model, id, config) do
+    Model.update_connector_config(model, id, config)
   end
 
   defp load_clusters(clusters) do
@@ -72,5 +83,12 @@ defmodule Tukc.App.Update do
       )
     end)
     |> Command.batch
+  end
+
+  defp load_connector_details(cluster, connector) do
+    Command.new(
+      fn -> KafkaConnect.connector_config(cluster, connector) end,
+      {:connector_config_updated, connector.id}
+    )
   end
 end

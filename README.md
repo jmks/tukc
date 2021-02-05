@@ -16,6 +16,7 @@ Currently under development.
 * connector commands
 * tasks commands
 * help overlay
+* status bar
 * tests (!!)
 * state machine for view transitions (could ease parts of Update)?
   * cluster -- select cluster --> cluster

@@ -10,7 +10,8 @@ defmodule Tukc.App do
   alias Tukc.App.Views.{
     Cluster,
     Clusters,
-    ConfigurationError
+    ConfigurationError,
+    Connector
   }
 
   import Ratatouille.Constants, only: [key: 1]
@@ -52,6 +53,9 @@ defmodule Tukc.App do
       {:connector_updated, connector} ->
         Update.update_connector(model, connector)
 
+      {{:connector_config_updated, id}, config} ->
+        Update.update_connector_config(model, id, config)
+
       {:event, %{ch: ch, key: key}} when ch == ?j or key == @arrow_down ->
         Update.cursor_down(model)
 
@@ -82,6 +86,9 @@ defmodule Tukc.App do
 
       :cluster ->
         Cluster.render(model.selected_cluster, model.connectors, model.selected_connector)
+
+      :connector ->
+        Connector.render(model.selected_cluster, model.selected_connector)
     end
   end
 end
