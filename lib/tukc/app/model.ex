@@ -18,7 +18,7 @@ defmodule Tukc.App.Model do
       selected: :clusters,
       clusters: sorted_clusters,
       selected_cluster_index: 0,
-      selected_cluster: List.first(sorted_clusters)
+      selected_cluster: hd(sorted_clusters)
     }
   end
 
