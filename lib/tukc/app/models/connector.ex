@@ -6,16 +6,16 @@ defmodule Tukc.App.Models.Connector do
     "UNASSIGNED" => :unassigned
   }
 
-  @enforce_keys [:name]
+  @enforce_keys [:name, :id]
   defstruct [
-    :name,
-    :type,
+    :name, :id,
+    :type, :config,
     jobs: :no_data, # {id, state}
     state: :no_data
   ]
 
   def new(name) do
-    %__MODULE__{name: name}
+    %__MODULE__{name: name, id: make_ref()}
   end
 
   def update_status(connector, status) do
@@ -26,5 +26,9 @@ defmodule Tukc.App.Models.Connector do
          {task["id"], Map.get(@states, task["state"])}
        end)
     }
+  end
+
+  def update_config(connector, config) do
+    %{connector | config: config}
   end
 end
