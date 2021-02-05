@@ -44,7 +44,7 @@ defmodule Tukc.App do
   @impl true
   def update(model, msg) do
     case msg do
-      {{:cluster_updated, _}, new_cluster} ->
+      {:cluster_updated, new_cluster} ->
         Model.update_cluster(model, new_cluster)
 
       {{:connectors_updated, cluster_name}, connectors} ->

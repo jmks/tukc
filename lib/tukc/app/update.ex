@@ -68,7 +68,7 @@ defmodule Tukc.App.Update do
     |> Enum.map(fn cluster ->
       Command.new(
         fn -> KafkaConnect.cluster_info(cluster) end,
-        {:cluster_updated, cluster.name}
+        :cluster_updated
       )
     end)
     |> Command.batch
