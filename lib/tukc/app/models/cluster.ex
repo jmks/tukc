@@ -1,15 +1,15 @@
 defmodule Tukc.App.Models.Cluster do
   @statuses [:connecting, :connected, :unreachable]
 
-  @enforce_keys [:name, :host, :port]
+  @enforce_keys [:name, :id, :host, :port]
   defstruct [
-    :name, :host, :port,
+    :name, :id, :host, :port,
     :cluster_id, :kafka_version,
     status: :connecting
   ]
 
   def from_map(%{"name" => name, "host" => host, "port" => port}) do
-    %__MODULE__{name: name, host: host, port: port}
+    %__MODULE__{name: name, id: make_ref(), host: host, port: port}
   end
 
   def url(cluster) do
