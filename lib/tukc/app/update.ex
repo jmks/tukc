@@ -35,6 +35,13 @@ defmodule Tukc.App.Update do
     {new_model, command}
   end
 
+  def unselect(%{selected: :connector} = model) do
+    new_model = Model.unselect_connector(model)
+    command = load_connector_for_cluster(model.selected_cluster)
+
+    {new_model, command}
+  end
+
   def unselect(model), do: model
 
   def update_connectors(model, cluster, []) do

@@ -100,6 +100,12 @@ defmodule Tukc.App.Model do
     |> view(:clusters)
   end
 
+  def unselect_connector(model) do
+    model
+    |> update_connector_config(model.selected_connector.id, nil)
+    |> view(:cluster)
+  end
+
   defp sort_by_name(things) do
     Enum.sort_by(things, fn thing -> thing.name end)
   end
