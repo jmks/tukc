@@ -8,6 +8,18 @@ defmodule Tukc.App.SelectionList do
 
   def selected(sel), do: :array.get(sel.index, sel.array)
 
+  def select(sel, selector) do
+    index = Enum.find(range(sel), fn index ->
+      selector.(:array.get(index, sel.array))
+    end)
+
+    if index do
+      %{sel | index: index}
+    else
+      sel
+    end
+  end
+
   def next(sel) do
     new_index = rem(sel.index + 1, :array.size(sel.array))
 

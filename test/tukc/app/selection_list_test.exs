@@ -60,4 +60,12 @@ defmodule Tukc.App.SelectionListTest do
       assert [1,2,3] = to_list(list |> previous)
     end
   end
+
+  describe "select" do
+    test "updates selected to first matching element" do
+      list = new([1,2,3])
+
+      assert 3 == select(list, fn el -> el == 3 end) |> selected
+    end
+  end
 end
