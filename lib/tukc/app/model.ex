@@ -34,6 +34,8 @@ defmodule Tukc.App.Model do
     %{model | selected_connector: new_selected, selected_connector_index: new_index}
   end
 
+  def next(model), do: model
+
   def previous(%{selected: :clusters} = model) do
     {new_selected, new_index} = Selection.previous(model.clusters, model.selected_cluster_index)
 
@@ -45,6 +47,8 @@ defmodule Tukc.App.Model do
 
     %{model | selected_connector: new_selected, selected_connector_index: new_index}
   end
+
+  def previous(model), do: model
 
   def update_cluster(model, new_cluster) do
     index = Enum.find_index(model.clusters, fn cluster -> cluster.name == new_cluster.name end)
