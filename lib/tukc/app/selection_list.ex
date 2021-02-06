@@ -40,7 +40,7 @@ defmodule Tukc.App.SelectionList do
   end
 
   def to_list(sel) do
-    for x <- range(sel), do: :array.get(x, sel.array)
+    :array.to_list(sel.array)
   end
 
   defp range(sel) do
