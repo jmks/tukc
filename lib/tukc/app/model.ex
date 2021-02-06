@@ -81,7 +81,7 @@ defmodule Tukc.App.Model do
       |> Enum.reduce(existing_connectors, fn name, conns ->
         [Connector.new(name) | conns]
       end)
-      |> Enum.sort_by(fn conn -> conn.name end)
+      |> sort_by_name
 
     selected_connector_index = Enum.find_index(connectors, fn conn -> conn.id == id end) || 0
     selected_connector = Enum.at(connectors, selected_connector_index)
@@ -96,7 +96,7 @@ defmodule Tukc.App.Model do
   def update_connectors(model, _, _), do: model
 
   def update_connector(model, connector) do
-    index = Enum.find_index(model.connectors, fn conn -> conn.name == connector.name end)
+    index = Enum.find_index(model.connectors, fn conn -> conn.id == connector.id end)
 
     if index do
       new_connectors = List.replace_at(model.connectors, index, connector)
