@@ -20,9 +20,32 @@ defmodule Tukc.App.SelectionList do
     %{sel | index: new_index}
   end
 
+  def replace(sel, matcher, replacement) do
+    Enum.reduce(range(sel), sel, fn index, sel ->
+      value = :array.get(index, sel.array)
+
+      if matcher.(value) do
+        new_value = if is_function(replacement) do
+          replacement.(value)
+        else
+          replacement
+        end
+        new_array = :array.set(index, new_value, sel.array)
+
+        %{sel | array: new_array}
+      else
+        sel
+      end
+    end)
+  end
+
   def to_list(sel) do
+    for x <- range(sel), do: :array.get(x, sel.array)
+  end
+
+  defp range(sel) do
     upper_index = :array.size(sel.array) - 1
 
-    for x <- 0..upper_index, do: :array.get(x, sel.array)
+    0..upper_index
   end
 end

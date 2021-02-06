@@ -25,6 +25,32 @@ defmodule Tukc.App.SelectionListTest do
     end
   end
 
+  describe "update" do
+    test "does not update non-matching elements" do
+      list = new([1,2,3])
+
+      new_list = replace(list, &(&1 > 3), nil)
+
+      assert [1,2,3] == to_list(new_list)
+    end
+
+    test "updates the matching elements" do
+      list = new([1,2,3,2])
+
+      new_list = replace(list, &(&1 == 2), 4)
+
+      assert [1,4,3,4] == to_list(new_list)
+    end
+
+    test "updates matching elements via function" do
+      list = new([1,2,3,4])
+
+      new_list = replace(list, &(&1 > 2), &(&1 + 1))
+
+      assert [1,2,4,5] == to_list(new_list)
+    end
+  end
+
   describe "to_list" do
     test "returns elements from beginning" do
       list = new([1,2,3])
