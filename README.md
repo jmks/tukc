@@ -6,11 +6,11 @@ Currently under development.
 
 ## TODO
 
-* show connector status
+* use SelectionList for connectors
+* show connector tasks
 * show connector config
 * auto-update every 2 seconds (configurable)
 * auto-update probably needs a caching layer
-* zipper for cyclic lists?
 * plugins view
 * logging view
 * connector commands
@@ -28,6 +28,12 @@ Currently under development.
   * cluster -- select connector --> connector
   * connector -- back -> cluster
 
+## Development
+
+```
+$ mix deps.get
+$ mix run --no-halt
+```
 
 ## Installation
 
