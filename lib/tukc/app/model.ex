@@ -54,11 +54,13 @@ defmodule Tukc.App.Model do
     %{model | clusters: new_clusters, selected_cluster: new_selected }
   end
 
-  def update_connectors(%{selected_cluster: %{name: cluster}} = model, cluster, []) do
+  def update_connectors(model, cluster_id, connectors)
+
+  def update_connectors(%{selected_cluster: %{id: id}} = model, id, []) do
       %{model | connectors: :none, selected_connector: nil, selected_connector_index: 0}
   end
 
-  def update_connectors(%{selected_cluster: %{name: cluster}, connectors: :no_data} = model, cluster, connector_names) do
+  def update_connectors(%{selected_cluster: %{id: id}, connectors: :no_data} = model, id, connector_names) do
     connectors =
       connector_names
       |> Enum.sort
@@ -67,8 +69,7 @@ defmodule Tukc.App.Model do
     %{model | connectors: connectors, selected_connector: hd(connectors), selected_connector_index: 0}
   end
 
-  def update_connectors(%{selected_cluster: %{name: cluster}} = model, cluster, connector_names) do
-    selected_id = model.selected_connector.id
+  def update_connectors(%{selected_cluster: %{name: id}} = model, id, connector_names) do
     existing_connectors = Enum.filter(model.connectors, fn conn -> Enum.member?(connector_names, conn.name) end)
     new_connector_names = connector_names -- Enum.map(existing_connectors, fn conn -> conn.name end)
     connectors =
@@ -78,7 +79,7 @@ defmodule Tukc.App.Model do
       end)
       |> Enum.sort_by(fn conn -> conn.name end)
 
-    selected_connector_index = Enum.find_index(connectors, fn conn -> conn.id == selected_id end) || 0
+    selected_connector_index = Enum.find_index(connectors, fn conn -> conn.id == id end) || 0
     selected_connector = Enum.at(connectors, selected_connector_index)
 
     %{model |

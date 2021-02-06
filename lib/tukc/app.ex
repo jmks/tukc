@@ -47,8 +47,8 @@ defmodule Tukc.App do
       {:cluster_updated, new_cluster} ->
         Model.update_cluster(model, new_cluster)
 
-      {{:connectors_updated, cluster_name}, connectors} ->
-        Update.update_connectors(model, cluster_name, connectors)
+      {{:connectors_updated, cluster_id}, connectors} ->
+        Update.update_connectors(model, cluster_id, connectors)
 
       {:connector_updated, connector} ->
         Update.update_connector(model, connector)

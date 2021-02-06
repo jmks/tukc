@@ -44,12 +44,12 @@ defmodule Tukc.App.Update do
 
   def unselect(model), do: model
 
-  def update_connectors(model, cluster, []) do
-    Model.update_connectors(model, cluster, [])
+  def update_connectors(model, cluster_id, []) do
+    Model.update_connectors(model, cluster_id, [])
   end
 
-  def update_connectors(model, cluster, connectors) do
-    new_model = Model.update_connectors(model, cluster, connectors)
+  def update_connectors(model, cluster_id, connectors) do
+    new_model = Model.update_connectors(model, cluster_id, connectors)
     command = load_connectors(new_model.selected_cluster, new_model.connectors)
 
     {new_model, command}
@@ -77,7 +77,7 @@ defmodule Tukc.App.Update do
   defp load_connectors(cluster) do
     Command.new(
       fn -> KafkaConnect.connectors(cluster) end,
-      {:connectors_updated, cluster.name}
+      {:connectors_updated, cluster.id}
     )
   end
 
