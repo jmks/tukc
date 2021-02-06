@@ -1,7 +1,7 @@
 defmodule Tukc.App.Model do
-  @enforce_keys [:selected]
+  @enforce_keys [:view]
   defstruct [
-    :selected,
+    :view,
     :clusters,
     :selected_cluster, :selected_cluster_index,
     :selected_connector, :selected_connector_index,
@@ -15,20 +15,20 @@ defmodule Tukc.App.Model do
     sorted_clusters = sort_by_name(clusters)
 
     %__MODULE__{
-      selected: :clusters,
+      view: :clusters,
       clusters: sorted_clusters,
       selected_cluster_index: 0,
       selected_cluster: hd(sorted_clusters)
     }
   end
 
-  def next(%{selected: :clusters} = model) do
+  def next(%{view: :clusters} = model) do
     {new_selected, new_index} = Selection.next(model.clusters, model.selected_cluster_index)
 
     %{model | selected_cluster: new_selected, selected_cluster_index: new_index}
   end
 
-  def next(%{selected: :cluster} = model) do
+  def next(%{view: :cluster} = model) do
     {new_selected, new_index} = Selection.next(model.connectors, model.selected_connector_index)
 
     %{model | selected_connector: new_selected, selected_connector_index: new_index}
@@ -36,13 +36,13 @@ defmodule Tukc.App.Model do
 
   def next(model), do: model
 
-  def previous(%{selected: :clusters} = model) do
+  def previous(%{view: :clusters} = model) do
     {new_selected, new_index} = Selection.previous(model.clusters, model.selected_cluster_index)
 
     %{model | selected_cluster: new_selected, selected_cluster_index: new_index}
   end
 
-  def previous(%{selected: :cluster} = model) do
+  def previous(%{view: :cluster} = model) do
     {new_selected, new_index} = Selection.previous(model.connectors, model.selected_connector_index)
 
     %{model | selected_connector: new_selected, selected_connector_index: new_index}
@@ -141,6 +141,6 @@ defmodule Tukc.App.Model do
   end
 
   defp view(model, new_view) do
-    %{model | selected: new_view}
+    %{model | view: new_view}
   end
 end

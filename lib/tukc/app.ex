@@ -80,7 +80,7 @@ defmodule Tukc.App do
 
   @impl true
   def render(model) do
-    case model.selected do
+    case model.view do
       :clusters ->
         Clusters.render(model.clusters, model.selected_cluster)
 

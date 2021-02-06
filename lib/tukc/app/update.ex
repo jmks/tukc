@@ -4,7 +4,7 @@ defmodule Tukc.App.Update do
   alias Tukc.App.Model
   alias Tukc.Data.KafkaConnect
 
-  def update(%{selected: :clusters} = model) do
+  def update(%{view: :clusters} = model) do
     {model, load_clusters(model.clusters)}
   end
 
@@ -12,15 +12,15 @@ defmodule Tukc.App.Update do
 
   def cursor_up(model), do: Model.previous(model)
 
-  def select(%{selected: :clusters, selected_cluster: %{status: :connected}} = model) do
-    new_model = Map.put(model, :selected, :cluster)
+  def select(%{view: :clusters, selected_cluster: %{status: :connected}} = model) do
+    new_model = Map.put(model, :view, :cluster)
     command = load_connectors(model.selected_cluster)
 
     {new_model, command}
   end
 
-  def select(%{selected: :cluster} = model) do
-    new_model = Map.put(model, :selected, :connector)
+  def select(%{view: :cluster} = model) do
+    new_model = Map.put(model, :view, :connector)
     command = load_connector_details(model.selected_cluster, model.selected_connector)
 
     {new_model, command}
@@ -28,14 +28,14 @@ defmodule Tukc.App.Update do
 
   def select(model), do: model
 
-  def unselect(%{selected: :cluster} = model) do
+  def unselect(%{view: :cluster} = model) do
     new_model = Model.unselect_cluster(model)
     command = load_clusters(model.clusters)
 
     {new_model, command}
   end
 
-  def unselect(%{selected: :connector} = model) do
+  def unselect(%{view: :connector} = model) do
     new_model = Model.unselect_connector(model)
     command = load_connectors(model.selected_cluster)
 
