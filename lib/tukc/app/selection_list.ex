@@ -1,24 +1,28 @@
 defmodule Tukc.App.SelectionList do
+  @enforce_keys [:array, :index]
+  defstruct [:array, :index]
+
   def new(list) do
-    {[], list}
+    %__MODULE__{array: :array.from_list(list), index: 0}
   end
 
-  def selected({_, [next | _]}), do: next
+  def selected(sel), do: :array.get(sel.index, sel.array)
 
-  def next({prev, [last]}) do
-    {[], Enum.reverse([last|prev])}
+  def next(sel) do
+    new_index = rem(sel.index + 1, :array.size(sel.array))
+
+    %{sel | index: new_index}
   end
 
-  def next({prev, [next|rest]}), do: {[next|prev], rest}
+  def previous(sel) do
+    new_index = if sel.index == 0, do: :array.size(sel.array) - 1, else: sel.index - 1
 
-  def prev({[], list}) do
-    half = div(length(list), 2)
-
-    nexts = Enum.take(list, half)
-    rest = Enum.drop(list, half)
-
-    prev({Enum.reverse(rest), nexts})
+    %{sel | index: new_index}
   end
 
-  def prev({[prev|rest], nexts}), do: {rest, [prev|nexts]}
+  def to_list(sel) do
+    upper_index = :array.size(sel.array) - 1
+
+    for x <- 0..upper_index, do: :array.get(x, sel.array)
+  end
 end
