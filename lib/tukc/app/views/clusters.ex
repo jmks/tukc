@@ -15,14 +15,14 @@ defmodule Tukc.App.Views.Clusters do
     background: color(:white)
   ]
 
-  def render(clusters, selected_cluster) do
+  def render(clusters, selected_cluster_id) do
     view do
       row do
         column(size: 12) do
           panel(title: "Kafka Connect clusters") do
             table do
               for cluster <- clusters do
-                selected? = cluster.name == selected_cluster.name
+                selected? = cluster.id == selected_cluster_id
 
                 table_row(if selected?, do: @style_selected, else: []) do
                   table_cell(content: cluster.name)

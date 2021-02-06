@@ -1,6 +1,7 @@
 defmodule Tukc.App.Update do
   alias Ratatouille.Runtime.Command
 
+  alias Tukc.App.SelectionList
   alias Tukc.App.Model
   alias Tukc.Data.KafkaConnect
 
@@ -65,6 +66,7 @@ defmodule Tukc.App.Update do
 
   defp load_clusters(clusters) do
     clusters
+    |> SelectionList.to_list
     |> Enum.map(fn cluster ->
       Command.new(
         fn -> KafkaConnect.cluster_info(cluster) end,

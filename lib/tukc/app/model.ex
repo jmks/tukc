@@ -3,29 +3,29 @@ defmodule Tukc.App.Model do
   defstruct [
     :view,
     :clusters,
-    :selected_cluster, :selected_cluster_index,
+    :selected_cluster,
     :selected_connector, :selected_connector_index,
     connectors: :no_data,
   ]
 
   alias Tukc.App.Models.Connector
-  alias Tukc.App.Selection
+  alias Tukc.App.{Selection, SelectionList}
 
   def with_clusters(clusters) do
-    sorted_clusters = sort_by_name(clusters)
+    sorted_clusters = sort_by_name(clusters) |> SelectionList.new
 
     %__MODULE__{
       view: :clusters,
       clusters: sorted_clusters,
-      selected_cluster_index: 0,
-      selected_cluster: hd(sorted_clusters)
+      selected_cluster: SelectionList.selected(sorted_clusters)
     }
   end
 
   def next(%{view: :clusters} = model) do
-    {new_selected, new_index} = Selection.next(model.clusters, model.selected_cluster_index)
+    new_clusters = SelectionList.next(model.clusters)
+    selected_cluster = SelectionList.selected(new_clusters)
 
-    %{model | selected_cluster: new_selected, selected_cluster_index: new_index}
+    %{model | clusters: new_clusters, selected_cluster: selected_cluster }
   end
 
   def next(%{view: :cluster} = model) do
@@ -37,9 +37,10 @@ defmodule Tukc.App.Model do
   def next(model), do: model
 
   def previous(%{view: :clusters} = model) do
-    {new_selected, new_index} = Selection.previous(model.clusters, model.selected_cluster_index)
+    new_clusters = SelectionList.previous(model.clusters)
+    selected_cluster = SelectionList.selected(new_clusters)
 
-    %{model | selected_cluster: new_selected, selected_cluster_index: new_index}
+    %{model | clusters: new_clusters, selected_cluster: selected_cluster}
   end
 
   def previous(%{view: :cluster} = model) do
@@ -51,9 +52,12 @@ defmodule Tukc.App.Model do
   def previous(model), do: model
 
   def update_cluster(model, new_cluster) do
-    index = Enum.find_index(model.clusters, fn cluster -> cluster.name == new_cluster.name end)
-    new_clusters = List.replace_at(model.clusters, index, new_cluster)
-    new_selected = Enum.at(new_clusters, model.selected_cluster_index)
+    new_clusters = SelectionList.replace(
+      model.clusters,
+      fn cl -> cl.id == new_cluster.id end,
+      new_cluster
+    )
+    new_selected = SelectionList.selected(new_clusters)
 
     %{model | clusters: new_clusters, selected_cluster: new_selected }
   end

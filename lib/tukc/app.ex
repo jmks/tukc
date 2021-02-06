@@ -13,6 +13,7 @@ defmodule Tukc.App do
     ConfigurationError,
     Connector
   }
+  alias Tukc.App.SelectionList
 
   import Ratatouille.Constants, only: [key: 1]
   @arrow_up key(:arrow_up)
@@ -82,7 +83,7 @@ defmodule Tukc.App do
   def render(model) do
     case model.view do
       :clusters ->
-        Clusters.render(model.clusters, model.selected_cluster)
+        Clusters.render(SelectionList.to_list(model.clusters), SelectionList.selected(model.clusters).id)
 
       :cluster ->
         Cluster.render(model.selected_cluster, model.connectors, model.selected_connector)
