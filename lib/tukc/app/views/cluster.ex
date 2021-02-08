@@ -92,7 +92,7 @@ defmodule Tukc.App.Views.Cluster do
   defp task_indicator(:no_data), do: table_cell(color: color(:yellow), content: "loading...")
 
   defp task_indicator(tasks) do
-    states = MapSet.new(tasks |> Enum.map(fn {_, state} -> state end))
+    states = MapSet.new(tasks |> Enum.map(fn task -> task.state end))
 
     cond do
       :running in states and MapSet.size(states) == 1 ->

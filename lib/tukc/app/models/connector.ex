@@ -7,6 +7,7 @@ defmodule Tukc.App.Models.Connector do
     state: :no_data
   ]
 
+  alias Tukc.App.Models.Task
   alias Tukc.App.States
 
   def new(name) do
@@ -17,9 +18,7 @@ defmodule Tukc.App.Models.Connector do
     %{ connector |
        state: States.parse!(status["connector"]["state"]),
        type: status["type"],
-       tasks: Enum.map(status["tasks"], fn task ->
-         {task["id"], States.parse!(task["state"])}
-       end
+       tasks: Enum.map(status["tasks"], &Task.from_map/1)
     }
   end
 

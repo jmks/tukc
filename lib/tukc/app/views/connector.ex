@@ -41,10 +41,11 @@ defmodule Tukc.App.Views.Connector do
 
   defp tasks(tasks) do
     table do
-      for {id, state} <- tasks do
+      for task <- tasks do
         table_row do
-          table_cell(content: to_string(id))
-          status(state)
+          table_cell(content: to_string(task.id))
+          table_cell(content: task.worker_id)
+          status(task.state)
         end
       end
     end
