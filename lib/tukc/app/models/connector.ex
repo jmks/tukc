@@ -10,7 +10,7 @@ defmodule Tukc.App.Models.Connector do
   defstruct [
     :name, :id,
     :type, :config,
-    jobs: :no_data, # {id, state}
+    tasks: :no_data, # {id, state}
     state: :no_data
   ]
 
@@ -22,7 +22,7 @@ defmodule Tukc.App.Models.Connector do
     %{ connector |
        state: Map.get(@states, status["connector"]["state"]),
        type: status["type"],
-       jobs: Enum.map(status["tasks"], fn task ->
+       tasks: Enum.map(status["tasks"], fn task ->
          {task["id"], Map.get(@states, task["state"])}
        end)
     }
