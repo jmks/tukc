@@ -85,6 +85,7 @@ defmodule Tukc.App.Update do
 
   defp load_connectors(cluster, connectors) do
     connectors
+    |> SelectionList.to_list
     |> Enum.map(fn connector ->
       Command.new(
         fn -> KafkaConnect.connector_status(cluster, connector) end,

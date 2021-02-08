@@ -83,7 +83,7 @@ defmodule Tukc.App do
   def render(model) do
     case model.view do
       :clusters ->
-        Clusters.render(SelectionList.to_list(model.clusters), SelectionList.selected(model.clusters).id)
+        Clusters.render(SelectionList.to_list(model.clusters), model.selected_cluster.id)
 
       :cluster ->
         Cluster.render(model.selected_cluster, model.connectors, model.selected_connector)

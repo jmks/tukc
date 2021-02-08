@@ -6,7 +6,6 @@ Currently under development.
 
 ## TODO
 
-* use SelectionList for connectors
 * show connector tasks
 * show connector config
 * auto-update every 2 seconds (configurable)

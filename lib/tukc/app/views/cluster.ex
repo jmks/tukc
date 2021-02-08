@@ -9,6 +9,7 @@ defmodule Tukc.App.Views.Cluster do
   import Ratatouille.View
 
   alias Tukc.App.Models
+  alias Tukc.App.SelectionList
 
   @style_selected [
     color: color(:black),
@@ -62,7 +63,7 @@ defmodule Tukc.App.Views.Cluster do
                 table_cell(content: "Tasks")
               end
 
-              for connector <- connectors do
+              for connector <- SelectionList.to_list(connectors) do
                 selected? = connector.name == selected_connector.name
 
                 table_row(if selected?, do: @style_selected, else: []) do

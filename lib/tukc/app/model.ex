@@ -4,8 +4,8 @@ defmodule Tukc.App.Model do
     :view,
     :clusters,
     :selected_cluster,
-    :selected_connector, :selected_connector_index,
-    connectors: :no_data,
+    :selected_connector,
+    connectors: :no_data
   ]
 
   alias Tukc.App.Models.Connector
@@ -29,9 +29,10 @@ defmodule Tukc.App.Model do
   end
 
   def next(%{view: :cluster} = model) do
-    {new_selected, new_index} = Selection.next(model.connectors, model.selected_connector_index)
+    new_connectors = SelectionList.next(model.connectors)
+    new_selected = SelectionList.selected(new_connectors)
 
-    %{model | selected_connector: new_selected, selected_connector_index: new_index}
+    %{model | connectors: new_connectors, selected_connector: new_selected}
   end
 
   def next(model), do: model
@@ -44,9 +45,10 @@ defmodule Tukc.App.Model do
   end
 
   def previous(%{view: :cluster} = model) do
-    {new_selected, new_index} = Selection.previous(model.connectors, model.selected_connector_index)
+    new_connectors = SelectionList.previous(model.connectors)
+    new_selected = SelectionList.selected(new_connectors)
 
-    %{model | selected_connector: new_selected, selected_connector_index: new_index}
+    %{model | connectors: new_connectors, selected_connector: new_selected}
   end
 
   def previous(model), do: model
@@ -65,7 +67,7 @@ defmodule Tukc.App.Model do
   def update_connectors(model, cluster_id, connectors)
 
   def update_connectors(%{selected_cluster: %{id: id}} = model, id, []) do
-      %{model | connectors: :none, selected_connector: nil, selected_connector_index: 0}
+      %{model | connectors: :none, selected_connector: nil}
   end
 
   def update_connectors(%{selected_cluster: %{id: id}, connectors: :no_data} = model, id, connector_names) do
@@ -73,55 +75,56 @@ defmodule Tukc.App.Model do
       connector_names
       |> Enum.sort
       |> Enum.map(&Connector.new(&1))
+      |> SelectionList.new
+    new_selected = SelectionList.selected(connectors)
 
-    %{model | connectors: connectors, selected_connector: hd(connectors), selected_connector_index: 0}
+    %{model | connectors: connectors, selected_connector: new_selected}
   end
 
   def update_connectors(%{selected_cluster: %{name: id}} = model, id, connector_names) do
-    existing_connectors = Enum.filter(model.connectors, fn conn -> Enum.member?(connector_names, conn.name) end)
-    new_connector_names = connector_names -- Enum.map(existing_connectors, fn conn -> conn.name end)
+    existing_connectors =
+      model.connectors
+      |> SelectionList.to_list
+      |> Enum.filter(fn conn -> Enum.member?(connector_names, conn.name) end)
+    existing_connector_names = Enum.map(existing_connectors, fn conn -> conn.name end)
+    new_connector_names = connector_names -- existing_connector_names
+
     connectors =
       new_connector_names
       |> Enum.reduce(existing_connectors, fn name, conns ->
         [Connector.new(name) | conns]
       end)
       |> sort_by_name
-
-    selected_connector_index = Enum.find_index(connectors, fn conn -> conn.id == id end) || 0
-    selected_connector = Enum.at(connectors, selected_connector_index)
+      |> SelectionList.new
+      |> SelectionList.select(fn conn -> conn.id == id end)
+    selected_connector = SelectionList.selected(connectors)
 
     %{model |
       connectors: connectors,
-      selected_connector: selected_connector,
-      selected_connector_index: selected_connector_index
+      selected_connector: selected_connector
     }
   end
 
   def update_connectors(model, _, _), do: model
 
   def update_connector(model, connector) do
-    index = Enum.find_index(model.connectors, fn conn -> conn.id == connector.id end)
+    new_connectors = SelectionList.replace(
+      model.connectors,
+      fn conn -> conn.id == connector.id end,
+      connector
+    )
 
-    if index do
-      new_connectors = List.replace_at(model.connectors, index, connector)
-
-      %{model | connectors: new_connectors}
-    else
-      model
-    end
+    %{model | connectors: new_connectors}
   end
 
   def update_connector_config(model, id, config) do
-    index = Enum.find_index(model.connectors, fn conn -> conn.id == id end)
+    new_connectors = SelectionList.replace(
+      model.connectors,
+      fn conn -> conn.id == id end,
+      &Connector.update_config(&1, config)
+    )
 
-    if index do
-      connector = Enum.at(model.connectors, index)
-      new_connectors = List.replace_at(model.connectors, index, Connector.update_config(connector, config))
-
-      %{model | connectors: new_connectors}
-    else
-      model
-    end
+    %{model | connectors: new_connectors}
   end
 
   def unselect_cluster(model) do
@@ -141,7 +144,7 @@ defmodule Tukc.App.Model do
   end
 
   defp clear_connectors(model) do
-    %{model | connectors: :no_data, selected_connector: nil, selected_connector_index: nil}
+    %{model | connectors: :no_data, selected_connector: nil}
   end
 
   defp view(model, new_view) do
