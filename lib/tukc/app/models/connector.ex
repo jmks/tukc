@@ -1,11 +1,4 @@
 defmodule Tukc.App.Models.Connector do
-  @states %{
-    "RUNNING" => :running,
-    "PAUSED" => :paused,
-    "FAILED" => :failed,
-    "UNASSIGNED" => :unassigned
-  }
-
   @enforce_keys [:name, :id]
   defstruct [
     :name, :id,
@@ -14,17 +7,19 @@ defmodule Tukc.App.Models.Connector do
     state: :no_data
   ]
 
+  alias Tukc.App.States
+
   def new(name) do
     %__MODULE__{name: name, id: make_ref()}
   end
 
   def update_status(connector, status) do
     %{ connector |
-       state: Map.get(@states, status["connector"]["state"]),
+       state: States.parse!(status["connector"]["state"]),
        type: status["type"],
        tasks: Enum.map(status["tasks"], fn task ->
-         {task["id"], Map.get(@states, task["state"])}
-       end)
+         {task["id"], States.parse!(task["state"])}
+       end
     }
   end
 
