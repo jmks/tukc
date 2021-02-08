@@ -9,7 +9,7 @@ defmodule Tukc.App.Model do
   ]
 
   alias Tukc.App.Models.Connector
-  alias Tukc.App.{Selection, SelectionList}
+  alias Tukc.App.SelectionList
 
   def with_clusters(clusters) do
     sorted_clusters = sort_by_name(clusters) |> SelectionList.new
