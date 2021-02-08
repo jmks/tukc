@@ -20,7 +20,15 @@ defmodule Tukc.App.Views.Connector do
 
         column(size: 6) do
           panel(title: "tasks") do
-            tasks(connector.tasks)
+            table do
+              table_row(attributes: [:bold]) do
+                table_cell(content: "Task ID")
+                table_cell(content: "Worker ID")
+                table_cell(content: "State")
+              end
+
+              tasks(connector.tasks)
+            end
           end
         end
       end
@@ -37,16 +45,18 @@ defmodule Tukc.App.Views.Connector do
   defp status(:running), do: table_cell(color: color(:green), content: "running")
   defp status(:failed), do: table_cell(color: color(:red), content: "failed")
 
-  defp tasks(:no_data), do: status(:no_data)
+  defp tasks(:no_data) do
+    table_row do
+      status(:no_data)
+    end
+  end
 
   defp tasks(tasks) do
-    table do
-      for task <- tasks do
-        table_row do
-          table_cell(content: to_string(task.id))
-          table_cell(content: task.worker_id)
-          status(task.state)
-        end
+    for task <- tasks do
+      table_row do
+        table_cell(content: to_string(task.id))
+        table_cell(content: task.worker_id)
+        status(task.state)
       end
     end
   end
