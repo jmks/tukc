@@ -10,13 +10,17 @@ defmodule Tukc.App.Views.Connector do
       row do
         column(size: 6) do
           panel(title: "status") do
-            status(connector.state)
+            table do
+              table_row do
+                status(connector.state)
+              end
+            end
           end
         end
 
         column(size: 6) do
           panel(title: "tasks") do
-            label(content: "not implemented")
+            tasks(connector.tasks)
           end
         end
       end
@@ -27,9 +31,22 @@ defmodule Tukc.App.Views.Connector do
     label(content: "#{connector.name} @ #{cluster.name} - #{Models.Cluster.url(cluster)}")
   end
 
-  defp status(:no_data), do: label(color: color(:yellow), content: "loading...")
-  defp status(:paused), do: label(color: color(:yellow), content: "paused")
-  defp status(:unassigned), do: label(color: color(:yellow), content: "unassigned")
-  defp status(:running), do: label(color: color(:green), content: "running")
-  defp status(:failed), do: label(color: color(:red), content: "failed")
+  defp status(:no_data), do: table_cell(color: color(:yellow), content: "loading...")
+  defp status(:paused), do: table_cell(color: color(:yellow), content: "paused")
+  defp status(:unassigned), do: table_cell(color: color(:yellow), content: "unassigned")
+  defp status(:running), do: table_cell(color: color(:green), content: "running")
+  defp status(:failed), do: table_cell(color: color(:red), content: "failed")
+
+  defp tasks(:no_data), do: status(:no_data)
+
+  defp tasks(tasks) do
+    table do
+      for {id, state} <- tasks do
+        table_row do
+          table_cell(content: to_string(id))
+          status(state)
+        end
+      end
+    end
+  end
 end
