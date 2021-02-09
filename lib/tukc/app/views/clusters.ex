@@ -21,6 +21,12 @@ defmodule Tukc.App.Views.Clusters do
         column(size: 12) do
           panel(title: "Kafka Connect clusters") do
             table do
+              table_row(attributes: [:bold]) do
+                table_cell(content: "Cluster name")
+                table_cell(content: "Host")
+                table_cell(content: "Status")
+              end
+
               for cluster <- clusters do
                 selected? = cluster.id == selected_cluster_id
 
