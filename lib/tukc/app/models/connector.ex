@@ -1,8 +1,8 @@
 defmodule Tukc.App.Models.Connector do
   @enforce_keys [:name, :id]
   defstruct [
-    :name, :id,
-    :type, :config,
+    :name, :id, :type,
+    config: :no_data,
     tasks: :no_data, # {id, state}
     state: :no_data
   ]

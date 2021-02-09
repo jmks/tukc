@@ -32,6 +32,14 @@ defmodule Tukc.App.Views.Connector do
           end
         end
       end
+
+      row do
+        column(size: 12) do
+          panel(title: "config") do
+            config(connector.config)
+          end
+        end
+      end
     end
   end
 
@@ -48,6 +56,8 @@ defmodule Tukc.App.Views.Connector do
   defp tasks(:no_data) do
     table_row do
       status(:no_data)
+      table_cell(content: " ")
+      table_cell(content: " ")
     end
   end
 
@@ -59,5 +69,15 @@ defmodule Tukc.App.Views.Connector do
         status(task.state)
       end
     end
+  end
+
+  defp config(:no_data) do
+    label(color: color(:yellow), content: "loading...")
+  end
+
+  defp config(config) do
+    {:ok, json} = Jason.encode(config, pretty: true)
+
+    label(content: json)
   end
 end

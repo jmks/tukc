@@ -6,7 +6,6 @@ Currently under development.
 
 ## TODO
 
-* show connector config
 * auto-update every 2 seconds (configurable)
 * auto-update probably needs a caching layer
 * plugins view
