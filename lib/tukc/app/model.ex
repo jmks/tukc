@@ -114,7 +114,7 @@ defmodule Tukc.App.Model do
       connector
     )
 
-    %{model | connectors: new_connectors}
+    %{model | connectors: new_connectors, selected_connector: SelectionList.selected(new_connectors)}
   end
 
   def update_connector_config(model, id, config) do
@@ -124,7 +124,7 @@ defmodule Tukc.App.Model do
       &Connector.update_config(&1, config)
     )
 
-    %{model | connectors: new_connectors}
+    %{model | connectors: new_connectors, selected_connector: SelectionList.selected(new_connectors)}
   end
 
   def unselect_cluster(model) do
